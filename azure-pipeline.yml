@@ -1,0 +1,33 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  ARM_CLIENT_ID: $(servicePrincipalId)
+  ARM_CLIENT_SECRET: $(servicePrincipalKey)
+  ARM_SUBSCRIPTION_ID: $(subscriptionId)
+  ARM_TENANT_ID: $(tenantId)
+  TF_VAR_location: 'West Europe'
+  TF_VAR_resource_group_name: 'example-resources'
+
+steps:
+- task: UseTerraform@0
+  inputs:
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+- task: UseTerraform@0
+  inputs:
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    environmentServiceName: 'AzureServiceConnection'
+    additionalArgs: '-var "location=$(TF_VAR_location)" -var "resource_group_name=$(TF_VAR_resource_group_name)"'
+
+- task: UseTerraform@0
+  inputs:
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    environmentServiceName: 'AzureServiceConnection'
+    additionalArgs: '-auto-approve -var "location=$(TF_VAR_location)" -var "resource_group_name=$(TF_VAR_resource_group_name)"'
