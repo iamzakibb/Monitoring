@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "example" {
 }
 
 resource "azurerm_storage_account" "example" {
-  name                     = "examplestorageacct"
+  name                     = "examplestorageacct-001"
   resource_group_name      = azurerm_resource_group.example.name
   location                 = azurerm_resource_group.example.location
   account_tier             = "Standard"
@@ -14,21 +14,21 @@ resource "azurerm_storage_account" "example" {
 }
 
 resource "azurerm_storage_container" "example" {
-  name                  = "tfstate"
+  name                  = "tfstate-001"
   storage_account_name  = azurerm_storage_account.example.name
   container_access_type = "private"
 }
 
 
 resource "azurerm_log_analytics_workspace" "example" {
-  name                = "example-log-analytics"
+  name                = "example-log-analytics-001"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   sku                 = "PerGB2018"
 }
 
 resource "azurerm_monitor_diagnostic_setting" "example" {
-  name               = "example-diagnostics"
+  name               = "example-diagnostics-001"
   target_resource_id = azurerm_log_analytics_workspace.example.id
 
   log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
@@ -53,7 +53,7 @@ resource "azurerm_monitor_diagnostic_setting" "example" {
 }
 
 resource "azurerm_monitor_metric_alert" "example" {
-  name                = "example-metric-alert"
+  name                = "example-metric-alert-001"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
   scopes              = [azurerm_log_analytics_workspace.example.id]
@@ -77,7 +77,7 @@ resource "azurerm_monitor_metric_alert" "example" {
 }
 
 resource "azurerm_monitor_action_group" "example" {
-  name                = "example-actiongroup"
+  name                = "example-actiongroup-001"
   resource_group_name = azurerm_resource_group.example.name
   short_name          = "example"
 
