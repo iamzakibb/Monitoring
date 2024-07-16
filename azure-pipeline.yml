@@ -1,33 +1,37 @@
 trigger:
-- main
+- none
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  ARM_CLIENT_ID: $(servicePrincipalId)
-  ARM_CLIENT_SECRET: $(servicePrincipalKey)
-  ARM_SUBSCRIPTION_ID: $(subscriptionId)
-  ARM_TENANT_ID: $(tenantId)
-  TF_VAR_location: 'West Europe'
-  TF_VAR_resource_group_name: 'example-resources'
+  serviceConnectionName: 'AzureServiceConnection'
+  location: 'West Europe'
+  resourceGroupName: 'example-resources-001-test'
+  storageAccountName: 'examplestorageacct'
+  containerName: 'tfstate'
+  tfStateKey: 'terraform.tfstate'
 
 steps:
 - task: UseTerraform@0
   inputs:
     command: 'init'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
+    environmentServiceName: $(serviceConnectionName)
+  displayName: 'Terraform Init for Main Infra'
 
 - task: UseTerraform@0
   inputs:
     command: 'plan'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
-    environmentServiceName: 'AzureServiceConnection'
-    additionalArgs: '-var "location=$(TF_VAR_location)" -var "resource_group_name=$(TF_VAR_resource_group_name)"'
+    environmentServiceName: $(serviceConnectionName)
+    additionalArgs: '-var "location=$(location)" -var "resource_group_name=$(resourceGroupName)"'
+  displayName: 'Terraform Plan for Main Infra'
 
 - task: UseTerraform@0
   inputs:
     command: 'apply'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
-    environmentServiceName: 'AzureServiceConnection'
-    additionalArgs: '-auto-approve -var "location=$(TF_VAR_location)" -var "resource_group_name=$(TF_VAR_resource_group_name)"'
+    environmentServiceName: $(serviceConnectionName)
+    additionalArgs: '-auto-approve -var "location=$(location)" -var "resource_group_name=$(resourceGroupName)"'
+  displayName: 'Terraform Apply for Main Infra'
