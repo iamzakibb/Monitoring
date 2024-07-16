@@ -1,14 +1,13 @@
 
 
-resource "azurerm_resource_group" "example" {
-  name     = "example-resources-001"
-  location = "West Europe"
+data "azurerm_resource_group" "example" {
+  name = "existing"
 }
 
 resource "azurerm_storage_account" "example" {
   name                     = "examplestorageacct-001"
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
+  resource_group_name      = data.azurerm_resource_group.example.name
+  location                 = data.azurerm_resource_group.example.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
@@ -23,7 +22,7 @@ resource "azurerm_storage_container" "example" {
 resource "azurerm_log_analytics_workspace" "example" {
   name                = "example-log-analytics-001"
   location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  resource_group_name = data.azurerm_resource_group.example.name
   sku                 = "PerGB2018"
 }
 
@@ -54,8 +53,8 @@ resource "azurerm_monitor_diagnostic_setting" "example" {
 
 resource "azurerm_monitor_metric_alert" "example" {
   name                = "example-metric-alert-001"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
+  resource_group_name = data.azurerm_resource_group.example.name
+#   location            = data.azurerm_resource_group.example.location
   scopes              = [azurerm_log_analytics_workspace.example.id]
   description         = "An example metric alert"
   severity            = 3
@@ -78,7 +77,7 @@ resource "azurerm_monitor_metric_alert" "example" {
 
 resource "azurerm_monitor_action_group" "example" {
   name                = "example-actiongroup-001"
-  resource_group_name = azurerm_resource_group.example.name
+  resource_group_name = data.azurerm_resource_group.example.name
   short_name          = "example"
 
   email_receiver {
