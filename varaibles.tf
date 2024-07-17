@@ -3,10 +3,6 @@ variable "location" {
   default     = "West Europe"
 }
 
-variable "resource_group_name" {
-  description = "The name of the resource group"
-  default     = "example-resources"
-}
 
 variable "log_analytics_workspace_name" {
   description = "The name of the Log Analytics workspace"
